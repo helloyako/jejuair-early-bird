@@ -12,14 +12,15 @@ NEW_NOTI_FILE=new_notification.txt
 URL="http://www.jejuair.net/jejuair/ko_KR/storyjejuair/news_notice_list.jsp"
 date=$(date "+[%Y-%m-%d %H:%M:%S]")
 
-MAIL_LIST="helloyako@gmail.com"
+NOTI_MAIL_LIST="helloyako@gmail.com"
+ADMIN_MAIL_LIST="helloyako@gmail.com"
 
 function send_mail
 {
 	local body=$1
 	local title=$2
-
-	for mail in $MAIL_LIST
+	local mail_list=$3
+	for mail in $mail_list
 	do
 		echo -e "${body}" | mail -s "${title}" $mail
 	done
@@ -32,7 +33,21 @@ fi
 cd $DATA_DIR
 
 echo -e "\n\n\n${date} crawling jeju air notification...\n"
-curl "${URL}" | perl -ne 'if(/<td class=\"title\"><a.+>(.+)<\/a><\/td>/){printf("%s\n", $1);}' > ${CURRENT_NOTI_FILE} 
+
+curl "${URL}" > temp.txt
+curl_return_code=$?
+
+if [ "$curl_return_code" != 0 ]; then
+	echo "##### error!! curl fail! #####"
+	body="curl 호출 실패.\n에러코드 $curl_return_code"
+    title="curl 호출 실패"
+    send_mail "${body}" "${title}" "${ADMIN_MAIL_LIST}"
+    echo "send_mail ${body} ${title} ${ADMIN_MAIL_LIST}"
+    exit -1
+fi
+
+cat temp.txt | perl -ne 'if(/<td class=\"title\"><a.+>(.+)<\/a><\/td>/){printf("%s\n", $1);}' > ${CURRENT_NOTI_FILE} 
+rm -rf temp.txt
 
 echo -e "\n\n##### jeju air notify #####\n\n"
 cat $CURRENT_NOTI_FILE
@@ -44,8 +59,8 @@ if [ "$noti_temp_line_num" -ne 10 ]; then
 	echo "##### error!! get notification #####"
 	body="공지사항 개수가 10개가 아닙니다.\n제주항공 공지사항 변경이 있거나 정규식이 잘못되었습니다."
 	title="제주항공 공지 실패"
-	send_mail "${body}" "${title}"
-	echo "send_mail ${body} ${title}"
+	send_mail "${body}" "${title}" "${ADMIN_MAIL_LIST}"
+	echo "send_mail ${body} ${title} ${ADMIN_MAIL_LIST}"
 	exit -1
 fi
 
@@ -80,7 +95,7 @@ if [ -f $NEW_NOTI_FILE ]; then
 		body=${body}${early_noti}
 		body=${body}"\n\n${URL}"
     	title="제주항공 얼리버드 공지"
-	    send_mail "${body}" "${title}"
+	    send_mail "${body}" "${title}" "${NOTI_MAIL_LIST}"
 	    echo -e "send_mail\n제목 : ${title}\n본문 : ${body}"
 	fi
 fi
