@@ -9,7 +9,7 @@ NOTI_FILE=notification.txt
 CURRENT_NOTI_FILE=current_notification.txt
 NEW_NOTI_FILE=new_notification.txt
 
-URL="http://www.jejuair.net/jejuair/ko_KR/storyjejuair/news_notice_list.jsp"
+URL="http://www.jejuair.net/jejuair/com/jeju/ibe/news/event/event_list.do"
 date=$(date "+[%Y-%m-%d %H:%M:%S]")
 
 NOTI_MAIL_LIST="helloyako@gmail.com"
@@ -46,7 +46,7 @@ if [ "$curl_return_code" != 0 ]; then
     exit -1
 fi
 
-cat temp.txt | perl -ne 'if(/<td class=\"title\"><a.+>(.+)<\/a><\/td>/){printf("%s\n", $1);}' > ${CURRENT_NOTI_FILE} 
+cat temp.txt | perl -ne 'if(/<td class=\"subj\"><a.+>(.+)<\/a><\/td>/){printf("%s\n", $1);}' > ${CURRENT_NOTI_FILE} 
 rm -rf temp.txt
 
 echo -e "\n\n##### jeju air notify #####\n\n"
@@ -55,9 +55,9 @@ echo -e "\n\n##### jeju air notify #####\n\n"
 
 noti_temp_line_num=$(wc -l ${CURRENT_NOTI_FILE} | cut -f1 -d" ")
 
-if [ "$noti_temp_line_num" -ne 10 ]; then
+if [ "$noti_temp_line_num" -lt 10 ]; then
 	echo "##### error!! get notification #####"
-	body="공지사항 개수가 10개가 아닙니다.\n제주항공 공지사항 변경이 있거나 정규식이 잘못되었습니다."
+	body="공지사항 개수가 10개보다 작습니다. \n제주항공 진행중 페이지 변경이 있거나 정규식이 잘못되었습니다."
 	title="제주항공 공지 실패"
 	send_mail "${body}" "${title}" "${ADMIN_MAIL_LIST}"
 	echo "send_mail ${body} ${title} ${ADMIN_MAIL_LIST}"
