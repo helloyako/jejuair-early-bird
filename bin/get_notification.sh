@@ -11,6 +11,7 @@ NEW_NOTI_FILE=new_notification.txt
 
 URL="http://www.jejuair.net/jejuair/com/jeju/ibe/news/event/event_list.do"
 date=$(date "+[%Y-%m-%d %H:%M:%S]")
+year_month=$(date "+%Y-%m")
 
 NOTI_MAIL_LIST="helloyako@gmail.com"
 ADMIN_MAIL_LIST="helloyako@gmail.com"
@@ -32,7 +33,13 @@ fi
 
 cd $DATA_DIR
 
+
 echo -e "\n\n\n${date} crawling jeju air notification...\n"
+
+if [ -a ${year_month} ]; then
+	echo -e "${year_month} exist!\n"
+	exit -1
+fi
 
 curl "${URL}" > temp.txt
 curl_return_code=$?
@@ -55,9 +62,9 @@ echo -e "\n\n##### jeju air notify #####\n\n"
 
 noti_temp_line_num=$(wc -l ${CURRENT_NOTI_FILE} | cut -f1 -d" ")
 
-if [ "$noti_temp_line_num" -lt 10 ]; then
+if [ "$noti_temp_line_num" -lt 5 ]; then
 	echo "##### error!! get notification #####"
-	body="공지사항 개수가 10개보다 작습니다. \n제주항공 진행중 페이지 변경이 있거나 정규식이 잘못되었습니다."
+	body="공지사항 개수가 5개보다 작습니다. \n제주항공 진행중 페이지 변경이 있거나 정규식이 잘못되었습니다."
 	title="제주항공 공지 실패"
 	send_mail "${body}" "${title}" "${ADMIN_MAIL_LIST}"
 	echo "send_mail ${body} ${title} ${ADMIN_MAIL_LIST}"
@@ -91,6 +98,7 @@ if [ -f $NEW_NOTI_FILE ]; then
 	early_noti=$(cat $NEW_NOTI_FILE | perl -pe 's/ //g' | grep -Ei "(얼리버드|early)")
 	if [ "$?" == 0 ]; then
 		echo "##### exist early bird notification!!! #####"
+		touch ${year_month}
 	    body="제주항공 얼리버드 공지추가.\n\n\n"
 		body=${body}${early_noti}
 		body=${body}"\n\n${URL}"
