@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APP_HOME=~/apps/jeju_early_bird
+APP_HOME=~/apps/jejuair-early-bird
 DATA_DIR=$APP_HOME/data
 LOG_DIR=$APP_HOME/log
 SCRIPT_DIR=$APP_HOME/bin
@@ -95,14 +95,14 @@ fi
 if [ -f $NEW_NOTI_FILE ]; then
 	echo "##### exist new notification ####"
 	cat $CURRENT_NOTI_FILE > $NOTI_FILE
-	early_noti=$(cat $NEW_NOTI_FILE | perl -pe 's/ //g' | grep -Ei "(얼리버드|early)")
+	early_noti=$(cat $NEW_NOTI_FILE | perl -pe 's/ //g' | grep -Ei "(lucky)")
 	if [ "$?" == 0 ]; then
 		echo "##### exist early bird notification!!! #####"
 		touch ${year_month}
-	    body="제주항공 얼리버드 공지추가.\n\n\n"
+	    body="제주항공 Lucky 7 공지추가.\n\n\n"
 		body=${body}${early_noti}
 		body=${body}"\n\n${URL}"
-    	title="제주항공 얼리버드 공지"
+    	title="제주항공 Lucky 7 공지"
 	    send_mail "${body}" "${title}" "${NOTI_MAIL_LIST}"
 	    echo -e "send_mail\n제목 : ${title}\n본문 : ${body}"
 	fi
