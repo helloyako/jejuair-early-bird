@@ -1,5 +1,13 @@
 # JEJU AIR EARLY BIRD
 
+Jeju air is Korea airline. [http://www.jejuair.net](http://www.jejuair.net/)
+
+## configure
+You should configure Postfix to Use Gmail SMTP.
+
+reference for Ubuntu
+https://rtcamp.com/tutorials/linux/ubuntu-postfix-gmail-smtp/
+
 ## License
 
 * [Apache Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
@@ -19,9 +27,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-## configure
-You should configure Postfix to Use Gmail SMTP.
-
-reference for Ubuntu
-https://rtcamp.com/tutorials/linux/ubuntu-postfix-gmail-smtp/
