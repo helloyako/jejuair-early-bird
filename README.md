@@ -1,4 +1,5 @@
 # JEJU AIR EARLY BIRD
+DEPRECATED
 
 Jeju air is Korea airline. [http://www.jejuair.net](http://www.jejuair.net/)
 
